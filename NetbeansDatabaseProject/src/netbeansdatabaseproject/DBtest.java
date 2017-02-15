@@ -3,7 +3,6 @@ import java.sql.*;
 import java.util.logging.*;
 
 public class DBtest {
-	
 	public static void main(String[] args) {
 		String url = "jdbc:postgresql://localhost:5432/postgres";
 		String user = "postgres";
