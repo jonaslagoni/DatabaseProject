@@ -1,0 +1,64 @@
+CREATE TABLE Component(
+	componentId SERIAL,
+    name VARCHAR(100) NOT NULL,
+    kind VARCHAR(15) NOT NULL,
+    price REAL NOT NULL,
+    preferedRestock INT NOT NULL,
+    minimumRestock INT NOT NULL,
+    stock INT NOT NULL,
+    CHECK (price >= 0),
+    CHECK (stock >= 0),
+    CHECK (preferedRestock >= 0),
+    CHECK (minimumRestock >= 0),
+    PRIMARY KEY (componentId)
+);
+CREATE TABLE Cpu(
+	componentId INT,
+    socket VARCHAR(30) NOT NULL,
+    busspeed REAL NOT NULL,
+    CHECK (busspeed >= 0),
+	FOREIGN KEY (componentId) 
+    REFERENCES Component (componentId) 
+    ON DELETE CASCADE
+);
+CREATE TABLE Ram(
+	componentId INT,
+    ramType VARCHAR(20) NOT NULL,
+    busspeed REAL NOT NULL,
+    CHECK (busspeed >= 0),
+	FOREIGN KEY (componentId) 
+    REFERENCES Component (componentId) 
+    ON DELETE CASCADE
+);
+CREATE TABLE Mainboard(
+	componentId INT,
+    socket VARCHAR(30) NOT NULL,
+    ramType VARCHAR(20) NOT NULL,
+    onBoardGraphics BOOLEAN NOT NULL,
+    formFactor VARCHAR(10) NOT NULL,
+	FOREIGN KEY (componentId) 
+    REFERENCES Component (componentId) 
+    ON DELETE CASCADE
+);
+CREATE TABLE ComputerCase(
+	componentId INT,
+    formFactor VARCHAR(10) NOT NULL,
+	FOREIGN KEY (componentId) 
+    REFERENCES Component (componentId) 
+    ON DELETE CASCADE
+);
+CREATE TABLE ComputerSystem(
+	componentListId SERIAL,
+    name VARCHAR(100) NOT NULL,
+    PRIMARY KEY (componentListId)
+);
+CREATE TABLE ComputerSystemComponents(
+	componentId INT,
+    componentListId INT,
+	FOREIGN KEY (componentId) 
+    REFERENCES Component (componentId) 
+    ON DELETE CASCADE,
+	FOREIGN KEY (componentListId) 
+    REFERENCES ComputerSystem (componentListId) 
+    ON DELETE CASCADE
+);
