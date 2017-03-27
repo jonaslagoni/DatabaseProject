@@ -21,13 +21,23 @@ import netbeansproject.databasecore.DatabaseController;
  * @author Lagoni
  */
 public class TestDataController {
-    private List<String> allCpuSockets;
-    private List<String> allFormFactors;
-    private List<String> allRamTypes;
-    private HashMap<String, List<Integer>> cpuSocketList;
-    private HashMap<String, List<Integer>> formFactorList;
-    private HashMap<String, List<Integer>> ramTypeList;
-    private List<Integer> gpuList;
+    //from gui
+    private String prefixCpu;
+    private String prefixRam;
+    private String prefixMainboard;
+    private String prefixGpu;
+    private String prefixCase;
+    private String prefixSystem;
+    private int numberOfSystems;
+    private int numberOfComponents;
+    
+    private final List<String> allCpuSockets;
+    private final List<String> allFormFactors;
+    private final List<String> allRamTypes;
+    private final HashMap<String, List<Integer>> cpuSocketList;
+    private final HashMap<String, List<Integer>> formFactorList;
+    private final HashMap<String, List<Integer>> ramTypeList;
+    private final List<Integer> gpuList;
     private final DatabaseController databaseController;
     private final int maxPreferedRestock = 50;
     private final int minPreferedRestock = 10;
@@ -54,8 +64,8 @@ public class TestDataController {
     
     private final Random random;
     
-    public TestDataController(){
-        databaseController = new DatabaseController();
+    public TestDataController(DatabaseController databaseController){
+        this.databaseController = databaseController;
         random = new Random();
         
         allCpuSockets = new ArrayList(){{
@@ -78,6 +88,16 @@ public class TestDataController {
         formFactorList = new HashMap();
         ramTypeList = new HashMap();
         gpuList = new ArrayList();
+        
+        prefixCpu = "CPU";
+        prefixRam = "RAM";
+        prefixGpu = "GPU";
+        prefixMainboard = "MAINBOARD";
+        prefixCase = "CASE";
+        prefixSystem = "SYSTEM";
+        
+        numberOfComponents = 30;
+        numberOfSystems = 8;
     }
     
     public void deleteExistingTuples(){
@@ -104,17 +124,17 @@ public class TestDataController {
         }
     }
     
-    public void insertTestData(int numberOfComponents, int numberOfSystems){
+    public void insertTestData(){
         Connection connection = databaseController.getCon();
         try {
             connection.setAutoCommit(false);
-            insertCPUs(connection, numberOfComponents);
-            insertRAMs(connection, numberOfComponents);
-            insertComputerCases(connection, numberOfComponents);
-            insertGPUs(connection, numberOfComponents);
-            insertMainboards(connection, numberOfComponents);
+            insertCPUs(connection);
+            insertRAMs(connection);
+            insertComputerCases(connection);
+            insertGPUs(connection);
+            insertMainboards(connection);
             connection.commit();
-            insertPredefinedSystems(connection, numberOfSystems, numberOfComponents);
+            insertPredefinedSystems(connection);
         } catch (SQLException e) {
             e.printStackTrace();
             try {
@@ -125,45 +145,45 @@ public class TestDataController {
         }
     }
     
-    private void insertCPUs(Connection connection, int numberOfComponents) throws SQLException{
+    private void insertCPUs(Connection connection) throws SQLException{
         for(int i = 1; i <= numberOfComponents; i++){
             insertCPU(connection,
-                "CPU " + i, //name
+                prefixCpu + " " + i, //name
                 allCpuSockets.get(random.nextInt(allCpuSockets.size())));
         }
     }
     
-    private void insertRAMs(Connection connection, int numberOfComponents) throws SQLException{
+    private void insertRAMs(Connection connection) throws SQLException{
         for(int i = 1; i <= numberOfComponents; i++){
             insertRAM(connection,
-                "RAM " + i, //name
+                prefixRam + " " + i, //name
                 allRamTypes.get(random.nextInt(allRamTypes.size())));
         }
     }
     
-    private void insertComputerCases(Connection connection, int numberOfComponents) throws SQLException{
+    private void insertComputerCases(Connection connection) throws SQLException{
         for(int i = 1; i <= numberOfComponents; i++){
             insertComputerCase(connection,
-                "Computercase " + i, //name
+                prefixCase + " " + i, //name
                 allFormFactors.get(random.nextInt(allFormFactors.size())));
         }
     }
     
-    private void insertGPUs(Connection connection, int numberOfComponents) throws SQLException{
+    private void insertGPUs(Connection connection) throws SQLException{
         for(int i = 1; i <= numberOfComponents; i++){
-            insertGPU(connection, "GPU " + i);
+            insertGPU(connection, prefixGpu + " " + i);
         }
     }
     
-    private void insertMainboards(Connection connection, int numberOfComponents) throws SQLException{
+    private void insertMainboards(Connection connection) throws SQLException{
         for(int i = 1; i <= numberOfComponents; i++){
-            insertMainBoard(connection, "Mainboard " + i, (i % 2 == 0));
+            insertMainBoard(connection, prefixMainboard + " " + i, (i % 2 == 0));
         }
     }
     
-    private void insertPredefinedSystems(Connection connection, int numberOfSystems, int numberOfComponents) throws SQLException{
+    private void insertPredefinedSystems(Connection connection) throws SQLException{
         for(int i = 1; i <= numberOfSystems; i++){
-            insertPredefinedSystem(connection, "Pre defined system " + i, numberOfComponents);
+            insertPredefinedSystem(connection, prefixSystem + " " + i);
         }
     }
     
@@ -292,7 +312,7 @@ public class TestDataController {
         preparedStatementInsert.executeUpdate();
     }
 
-    private void insertPredefinedSystem(Connection connection, String name, int numberOfComponents) throws SQLException{
+    private void insertPredefinedSystem(Connection connection, String name) throws SQLException{
         Statement mainboardStatement = connection.createStatement(ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_UPDATABLE);
         String mainboardSQL = "SELECT * FROM mainboard";
         ResultSet mainboardRS = mainboardStatement.executeQuery(mainboardSQL);
@@ -341,5 +361,118 @@ public class TestDataController {
         preparedStatementInsert.setInt(1, componentId);
         preparedStatementInsert.setInt(2, systemId);
         preparedStatementInsert.executeUpdate();
+    }
+    
+
+    /**
+     * @return the prefixCpu
+     */
+    public String getPrefixCpu() {
+        return prefixCpu;
+    }
+
+    /**
+     * @param prefixCpu the prefixCpu to set
+     */
+    public void setPrefixCpu(String prefixCpu) {
+        this.prefixCpu = prefixCpu;
+    }
+
+    /**
+     * @return the prefixRam
+     */
+    public String getPrefixRam() {
+        return prefixRam;
+    }
+
+    /**
+     * @param prefixRam the prefixRam to set
+     */
+    public void setPrefixRam(String prefixRam) {
+        this.prefixRam = prefixRam;
+    }
+
+    /**
+     * @return the prefixMainboard
+     */
+    public String getPrefixMainboard() {
+        return prefixMainboard;
+    }
+
+    /**
+     * @param prefixMainboard the prefixMainboard to set
+     */
+    public void setPrefixMainboard(String prefixMainboard) {
+        this.prefixMainboard = prefixMainboard;
+    }
+
+    /**
+     * @return the prefixGpu
+     */
+    public String getPrefixGpu() {
+        return prefixGpu;
+    }
+
+    /**
+     * @param prefixGpu the prefixGpu to set
+     */
+    public void setPrefixGpu(String prefixGpu) {
+        this.prefixGpu = prefixGpu;
+    }
+
+    /**
+     * @return the prefixCase
+     */
+    public String getPrefixCase() {
+        return prefixCase;
+    }
+
+    /**
+     * @param prefixCase the prefixCase to set
+     */
+    public void setPrefixCase(String prefixCase) {
+        this.prefixCase = prefixCase;
+    }
+
+    /**
+     * @return the prefixSystem
+     */
+    public String getPrefixSystem() {
+        return prefixSystem;
+    }
+
+    /**
+     * @param prefixSystem the prefixSystem to set
+     */
+    public void setPrefixSystem(String prefixSystem) {
+        this.prefixSystem = prefixSystem;
+    }
+
+    /**
+     * @return the numberOfSystems
+     */
+    public int getNumberOfSystems() {
+        return numberOfSystems;
+    }
+
+    /**
+     * @param numberOfSystems the numberOfSystems to set
+     */
+    public void setNumberOfSystems(int numberOfSystems) {
+        this.numberOfSystems = numberOfSystems;
+    }
+
+    /**
+     * @return the numberOfComponents
+     */
+    public int getNumberOfComponents() {
+        return numberOfComponents;
+    }
+
+    /**
+     * @param numberOfComponents the numberOfComponents to set
+     */
+    public void setNumberOfComponents(int numberOfComponents) {
+        this.numberOfComponents = numberOfComponents;
     }
 }
