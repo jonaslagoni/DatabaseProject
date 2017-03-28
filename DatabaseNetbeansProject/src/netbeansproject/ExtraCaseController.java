@@ -7,7 +7,9 @@ package netbeansproject;
 
 import java.net.URL;
 import java.util.ResourceBundle;
+import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.control.Label;
 
 /**
  * FXML Controller class
@@ -16,6 +18,9 @@ import javafx.fxml.Initializable;
  */
 public class ExtraCaseController implements Initializable {
 
+    @FXML
+    private Label formFactor;
+
     /**
      * Initializes the controller class.
      */
@@ -23,5 +28,12 @@ public class ExtraCaseController implements Initializable {
     public void initialize(URL url, ResourceBundle rb) {
         // TODO
     }    
+
+    /**
+     * @param formFactor the formFactor to set
+     */
+    public void setFormFactor(String formFactor) {
+        this.formFactor.setText(formFactor);
+    }
     
 }

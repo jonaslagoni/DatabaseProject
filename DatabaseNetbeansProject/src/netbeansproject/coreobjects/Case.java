@@ -10,5 +10,19 @@ package netbeansproject.coreobjects;
  * @author Lagoni
  */
 public class Case extends Component {
-    
+    private String formFactor;
+
+    /**
+     * @return the formFactor
+     */
+    public String getFormFactor() {
+        return formFactor;
+    }
+
+    /**
+     * @param formFactor the formFactor to set
+     */
+    public void setFormFactor(String formFactor) {
+        this.formFactor = formFactor;
+    }
 }

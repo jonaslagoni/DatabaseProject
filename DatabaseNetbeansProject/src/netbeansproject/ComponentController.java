@@ -7,7 +7,12 @@ package netbeansproject;
 
 import java.io.IOException;
 import java.net.URL;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ResourceBundle;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
@@ -18,8 +23,13 @@ import javafx.scene.control.TextField;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.StackPane;
+import javafx.scene.layout.VBox;
+import netbeansproject.coreobjects.Case;
 import netbeansproject.coreobjects.Component;
 import netbeansproject.coreobjects.Cpu;
+import netbeansproject.coreobjects.Mainboard;
+import netbeansproject.coreobjects.Ram;
+import netbeansproject.databasecore.DatabaseController;
 
 /**
  * FXML Controller class
@@ -27,13 +37,9 @@ import netbeansproject.coreobjects.Cpu;
  * @author jonas
  */
 public class ComponentController implements Initializable {
-    public enum ComponentType {
-        CPU, RAM, CASE, MAINBOARD, GPU
-    };
-    private boolean shown;
-    private ComponentType componentType;
-    private AnchorPane componentTypeAnchorPane;
-    private Component component;
+
+    @FXML
+    private StackPane mainPanel;
     @FXML
     private Label componentId;
     @FXML
@@ -58,14 +64,26 @@ public class ComponentController implements Initializable {
     private TextField componentNameEdit;
     @FXML
     private TextField componentPriceEdit;
+    @FXML
+    private VBox vboxExtrainfo;
 
+    
+    private DatabaseController databaseController;
+    public enum ComponentType {
+        CPU, RAM, CASE, MAINBOARD, GPU
+    };
+    private boolean shown;
+    private ComponentType componentType;
+    private VBox componentTypeAnchorPane;
+    private Component component;
+    
     /**
      * Initializes the controller class.
      */
     @Override
     public void initialize(URL url, ResourceBundle rb) {
         // TODO
-        root.addEventHandler(MouseEvent.MOUSE_PRESSED, new EventHandler<MouseEvent>(){
+        mainPanel.addEventHandler(MouseEvent.MOUSE_PRESSED, new EventHandler<MouseEvent>(){
             public void handle(MouseEvent e) {
                 toggleExtraInfo();
              }
@@ -81,8 +99,8 @@ public class ComponentController implements Initializable {
             root.setPrefHeight(50);
         }else{
             root.getChildren().add(extraInfoStackPane);
-            root.setPrefHeight(120);
-            root.setMaxHeight(120);
+            root.setPrefHeight(175);
+            root.setMaxHeight(175);
         }
         shown = !shown;
     }
@@ -105,6 +123,7 @@ public class ComponentController implements Initializable {
      */
     public void setComponentName(String componentName) {
         this.componentName.setText(componentName);
+        componentNameEdit.setText(componentName);
     }
 
     /**
@@ -112,6 +131,7 @@ public class ComponentController implements Initializable {
      */
     public void setComponentPrice(String componentPrice) {
         this.componentPrice.setText(componentPrice);
+        componentPriceEdit.setText(componentPrice);
     }
 
     /**
@@ -137,6 +157,21 @@ public class ComponentController implements Initializable {
 
     @FXML
     private void saveComponentEdits(ActionEvent event) {
+        String updateStatement = "UPDATE component " +
+        "SET name=?, price=? " +
+        "WHERE componentid = "+ componentId.getText() + ";";
+        if(FXMLDocumentController.isDouble(componentPriceEdit.getText(), 2, 8)){
+            try {
+                PreparedStatement preparedStatementInsert = databaseController.getCon().prepareStatement(updateStatement, Statement.RETURN_GENERATED_KEYS);
+                preparedStatementInsert.setString(1, componentNameEdit.getText());
+                preparedStatementInsert.setDouble(2, Double.parseDouble(componentPriceEdit.getText()));
+                preparedStatementInsert.executeUpdate();
+                componentName.setText(componentNameEdit.getText());
+                componentPrice.setText(componentPriceEdit.getText());
+            } catch (SQLException ex) {
+                Logger.getLogger(ComponentController.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
     }
 
     /**
@@ -146,29 +181,41 @@ public class ComponentController implements Initializable {
         try {
             this.componentType = componentType;
             if(componentTypeAnchorPane != null){
-                root.getChildren().add(componentTypeAnchorPane);
+                vboxExtrainfo.getChildren().remove(componentTypeAnchorPane);
             }
-            FXMLLoader loader = null;
             switch(componentType){
                 case CPU:
-                    loader = new FXMLLoader(getClass().getResource("fxml/ExtraCpu.fxml"));
+                    FXMLLoader loader = new FXMLLoader(getClass().getResource("fxml/ExtraCpu.fxml"));
+                    componentTypeAnchorPane = (VBox)loader.load();
                     ExtraCpuController cpuController = loader.<ExtraCpuController>getController();
-                    //cpuController.setBusSpeed(((Cpu)component).getClockSpeed() == 0.0 ? "" : "");
+                    cpuController.setClockSpeed("" + FXMLDocumentController.round(((Cpu)component).getClockSpeed(), 2));
                     cpuController.setSocket(((Cpu)component).getSocket());
                     break;
                 case RAM:
                     loader = new FXMLLoader(getClass().getResource("fxml/ExtraRam.fxml"));
+                    componentTypeAnchorPane = (VBox)loader.load();
+                    ExtraRamController ramController = loader.<ExtraRamController>getController();
+                    ramController.setRamType(((Ram)component).getRamType());
+                    ramController.setBusSpeed("" + ((Ram)component).getBusSpeed());
                     break;
                 case MAINBOARD:
                     loader = new FXMLLoader(getClass().getResource("fxml/ExtraMainboard.fxml"));
+                    componentTypeAnchorPane = (VBox)loader.load();
+                    ExtraMainboardController mainboardController = loader.<ExtraMainboardController>getController();
+                    mainboardController.setFormFactor(((Mainboard)component).getFormFactor());
+                    mainboardController.setOnBoardGraphics("" + ((Mainboard)component).isOnBoardGraphics());
+                    mainboardController.setRamType(((Mainboard)component).getRamType());
+                    mainboardController.setSocket(((Mainboard)component).getSocket());
                     break;
                 case CASE:
                     loader = new FXMLLoader(getClass().getResource("fxml/ExtraCase.fxml"));
+                    componentTypeAnchorPane = (VBox)loader.load();
+                    ExtraCaseController caseController = loader.<ExtraCaseController>getController();
+                    caseController.setFormFactor(((Case)component).getFormFactor());
                     break;
             }
-            if(loader != null){
-                componentTypeAnchorPane = (AnchorPane)loader.load();
-                extraInfoStackPane.getChildren().add(componentTypeAnchorPane);
+            if(componentTypeAnchorPane != null){
+                vboxExtrainfo.getChildren().add(componentTypeAnchorPane);
             }
         } catch (IOException ex) {
             System.out.println(ex);
@@ -180,6 +227,13 @@ public class ComponentController implements Initializable {
      */
     public void setComponent(Component component) {
         this.component = component;
+    }
+
+    /**
+     * @param databaseController the databaseController to set
+     */
+    public void setDatabaseController(DatabaseController databaseController) {
+        this.databaseController = databaseController;
     }
 
     

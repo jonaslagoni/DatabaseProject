@@ -4,39 +4,45 @@
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.VBox?>
 
-<AnchorPane prefHeight="50.0" prefWidth="800.0" xmlns="http://javafx.com/javafx/8.0.60" xmlns:fx="http://javafx.com/fxml/1" fx:controller="netbeansproject.ExtraCpuController">
+<VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="50.0" prefWidth="800.0" xmlns="http://javafx.com/javafx/8.0.60" xmlns:fx="http://javafx.com/fxml/1" fx:controller="netbeansproject.ExtraCpuController">
    <children>
-      <HBox maxHeight="50.0" prefHeight="48.0" prefWidth="800.0">
+      <AnchorPane prefHeight="50.0" prefWidth="800.0">
          <children>
-            <HBox prefHeight="100.0" prefWidth="400.0">
+            <HBox maxHeight="50.0" prefHeight="48.0" prefWidth="800.0">
                <children>
-                  <StackPane prefHeight="150.0" prefWidth="400.0">
+                  <HBox prefHeight="100.0" prefWidth="400.0">
                      <children>
-                        <AnchorPane maxWidth="200.0" prefHeight="200.0" prefWidth="200.0">
+                        <StackPane prefHeight="150.0" prefWidth="400.0">
                            <children>
-                              <Label layoutX="82.0" layoutY="6.0" text="Socket" />
-                              <Label fx:id="socket" layoutX="83.0" layoutY="26.0" text="socket" />
+                              <AnchorPane maxWidth="200.0" prefHeight="200.0" prefWidth="200.0">
+                                 <children>
+                                    <Label layoutX="82.0" layoutY="6.0" text="Socket" />
+                                    <Label fx:id="socket" layoutX="83.0" layoutY="26.0" text="socket" />
+                                 </children>
+                              </AnchorPane>
                            </children>
-                        </AnchorPane>
+                        </StackPane>
                      </children>
-                  </StackPane>
-               </children></HBox>
-            <HBox prefHeight="100.0" prefWidth="400.0">
-               <children>
-                  <StackPane prefHeight="150.0" prefWidth="400.0">
+                  </HBox>
+                  <HBox prefHeight="100.0" prefWidth="400.0">
                      <children>
-                        <AnchorPane maxWidth="200.0" prefHeight="200.0" prefWidth="200.0">
+                        <StackPane prefHeight="150.0" prefWidth="400.0">
                            <children>
-                              <Label layoutX="73.0" layoutY="6.0" text="clock speed" />
-                              <Label fx:id="busSpeed" layoutX="92.0" layoutY="26.0" text="0.0" />
+                              <AnchorPane maxWidth="200.0" prefHeight="200.0" prefWidth="200.0">
+                                 <children>
+                                    <Label layoutX="73.0" layoutY="6.0" text="clock speed" />
+                                    <Label fx:id="clockSpeed" layoutX="92.0" layoutY="26.0" text="0.0" />
+                                 </children>
+                              </AnchorPane>
                            </children>
-                        </AnchorPane>
+                        </StackPane>
                      </children>
-                  </StackPane>
+                  </HBox>
                </children>
             </HBox>
          </children>
-      </HBox>
+      </AnchorPane>
    </children>
-</AnchorPane>
+</VBox>

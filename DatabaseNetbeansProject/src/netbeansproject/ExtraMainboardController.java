@@ -7,7 +7,9 @@ package netbeansproject;
 
 import java.net.URL;
 import java.util.ResourceBundle;
+import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.control.Label;
 
 /**
  * FXML Controller class
@@ -15,6 +17,14 @@ import javafx.fxml.Initializable;
  * @author Lagoni
  */
 public class ExtraMainboardController implements Initializable {
+    @FXML
+    private Label socket;
+    @FXML
+    private Label ramType;
+    @FXML
+    private Label onBoardGraphics;
+    @FXML
+    private Label formFactor;
 
     /**
      * Initializes the controller class.
@@ -24,4 +34,33 @@ public class ExtraMainboardController implements Initializable {
         // TODO
     }    
     
+
+    /**
+     * @param socket the socket to set
+     */
+    public void setSocket(String socket) {
+        this.socket.setText(socket);
+    }
+
+    /**
+     * @param ramType the ramType to set
+     */
+    public void setRamType(String ramType) {
+        this.ramType.setText(ramType);
+    }
+
+    /**
+     * @param onBoardGraphics the onBoardGraphics to set
+     */
+    public void setOnBoardGraphics(String onBoardGraphics) {
+        this.onBoardGraphics.setText(onBoardGraphics);
+    }
+
+    /**
+     * @param formFactor the formFactor to set
+     */
+    public void setFormFactor(String formFactor) {
+        this.formFactor.setText(formFactor);
+    }
+
 }

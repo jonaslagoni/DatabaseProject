@@ -20,7 +20,7 @@ public class ExtraCpuController implements Initializable {
     @FXML
     private Label socket;
     @FXML
-    private Label busSpeed;
+    private Label clockSpeed;
 
     /**
      * Initializes the controller class.
@@ -40,8 +40,8 @@ public class ExtraCpuController implements Initializable {
     /**
      * @param clockSpeed the clockSpeed to set
      */
-    public void setBusSpeed(String clockSpeed) {
-        this.busSpeed.setText(clockSpeed);
+    public void setClockSpeed(String clockSpeed) {
+        this.clockSpeed.setText(clockSpeed);
     }
 
     

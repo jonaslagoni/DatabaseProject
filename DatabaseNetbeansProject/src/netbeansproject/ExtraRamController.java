@@ -7,7 +7,9 @@ package netbeansproject;
 
 import java.net.URL;
 import java.util.ResourceBundle;
+import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.control.Label;
 
 /**
  * FXML Controller class
@@ -15,6 +17,10 @@ import javafx.fxml.Initializable;
  * @author Lagoni
  */
 public class ExtraRamController implements Initializable {
+    @FXML
+    private Label ramType;
+    @FXML
+    private Label busSpeed;
 
     /**
      * Initializes the controller class.
@@ -23,5 +29,20 @@ public class ExtraRamController implements Initializable {
     public void initialize(URL url, ResourceBundle rb) {
         // TODO
     }    
+
+    /**
+     * @param ramType the ramType to set
+     */
+    public void setRamType(String ramType) {
+        this.ramType.setText(ramType);
+    }
+
+    /**
+     * @param busSpeed the busSpeed to set
+     */
+    public void setBusSpeed(String busSpeed) {
+        this.busSpeed.setText(busSpeed);
+    }
+
     
 }
