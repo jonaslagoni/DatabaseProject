@@ -47,15 +47,15 @@ public class TestDataController {
     private final float minPrice = 1.0f;
     
     //cpu
-    private final float maxBusSpeedCpu = 4.5f;
-    private final float minBusSpeedCpu = 2.0f;
+    private final float maxClockSpeedCpu = 4.5f;
+    private final float minClockSpeedCpu = 2.0f;
     
     //RAM
     private final int maxBusSpeedRam = 3500;
     private final int minBusSpeedRam = 1024;
     
     private final String insertComponent = "INSERT INTO component(name, kind, price, preferedrestock, minimumrestock, stock) VALUES (?, ?, ?, ?, ?, ?);";
-    private final String insertCPU = "INSERT INTO cpu(componentId, socket, busspeed) VALUES (?, ?, ?);";
+    private final String insertCPU = "INSERT INTO cpu(componentId, socket, clockspeed) VALUES (?, ?, ?);";
     private final String insertRAM = "INSERT INTO ram(componentid, ramtype, busspeed) VALUES (?, ?, ?);";
     private final String insertComputerCase = "INSERT INTO computercase(componentid, formfactor) VALUES (?, ?);";
     private final String insertMainboards = "INSERT INTO mainboard(componentid, socket, ramtype, onboardgraphics, formfactor) VALUES (?, ?, ?, ?, ?);";
@@ -202,7 +202,7 @@ public class TestDataController {
         preparedStatementInsert = connection.prepareStatement(insertCPU);
         preparedStatementInsert.setInt(1, lastInsertedId);
         preparedStatementInsert.setString(2, socket);
-        preparedStatementInsert.setFloat(3, (float)(Math.round((random.nextFloat()* (maxBusSpeedCpu - minBusSpeedCpu) + minBusSpeedCpu)*10.0)/10.0));
+        preparedStatementInsert.setFloat(3, (float)(Math.round((random.nextFloat()* (maxClockSpeedCpu - minClockSpeedCpu) + minClockSpeedCpu)*10.0)/10.0));
         preparedStatementInsert.executeUpdate();
         if(cpuSocketList.get(socket) == null){
             cpuSocketList.put(socket, new ArrayList(){{add(lastInsertedId);}});
@@ -316,7 +316,7 @@ public class TestDataController {
         Statement mainboardStatement = connection.createStatement(ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_UPDATABLE);
         String mainboardSQL = "SELECT * FROM mainboard";
         ResultSet mainboardRS = mainboardStatement.executeQuery(mainboardSQL);
-        mainboardRS.absolute(random.nextInt(numberOfComponents));
+        mainboardRS.absolute(random.nextInt(numberOfComponents-1)+1);
         //grab the mainboard id
         int mainboardId = mainboardRS.getInt("componentid");
         String socketToFind = mainboardRS.getString("socket");

@@ -15,8 +15,8 @@ CREATE TABLE Component(
 CREATE TABLE Cpu(
 	componentId INT,
     socket VARCHAR(30) NOT NULL,
-    busspeed DECIMAL(3,1) NOT NULL,
-    CHECK (busspeed >= 0),
+    clockspeed DECIMAL(3,1) NOT NULL,
+    CHECK (clockspeed >= 0),
 	FOREIGN KEY (componentId) 
     REFERENCES Component (componentId) 
     ON DELETE CASCADE
@@ -24,7 +24,7 @@ CREATE TABLE Cpu(
 CREATE TABLE Ram(
 	componentId INT,
     ramType VARCHAR(20) NOT NULL,
-    busspeed DECIMAL(3,1) NOT NULL,
+    busspeed INT NOT NULL,
     CHECK (busspeed >= 0),
 	FOREIGN KEY (componentId) 
     REFERENCES Component (componentId) 

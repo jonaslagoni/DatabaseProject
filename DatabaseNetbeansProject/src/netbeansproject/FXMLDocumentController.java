@@ -12,19 +12,17 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ResourceBundle;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
-import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.AnchorPane;
-import javafx.scene.layout.Pane;
+import netbeansproject.coreobjects.Component;
+import netbeansproject.coreobjects.Cpu;
 import netbeansproject.databasecore.DatabaseController;
 import netbeansproject.testdata.TestDataController;
 
@@ -76,6 +74,7 @@ public class FXMLDocumentController implements Initializable {
         initComponentList();
     }    
     private void initComponentList(){
+        components.clear();
         try {
             Connection con = databaseController.getCon();
             Statement componentListStatement = con.createStatement(ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_UPDATABLE);
@@ -104,7 +103,11 @@ public class FXMLDocumentController implements Initializable {
                         
                         break;
                     case "CPU":
-                        
+                        Cpu component = new Cpu();
+                        component.setClockSpeed(componentsRS.getFloat("clockSpeed"));
+                        component.setSocket(componentsRS.getString("socket") == null ? "Nothing" : componentsRS.getString("socket"));
+                        controller.setComponent(component);
+                        //controller.setComponentType(ComponentController.ComponentType.CPU);
                         break;
                     case "MAINBOARD":
                         
@@ -123,6 +126,7 @@ public class FXMLDocumentController implements Initializable {
     }
     @FXML
     private void updateComponentsList(ActionEvent event) {
+        initComponentList();
     }
 
     @FXML
