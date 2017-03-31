@@ -46,14 +46,28 @@
                         </StackPane>
                      </children>
                   </HBox>
-                  <HBox prefHeight="40.0" prefWidth="215.0">
+                  <HBox prefHeight="40.0" prefWidth="116.0">
                      <children>
                         <StackPane prefHeight="41.0" prefWidth="146.0">
                            <children>
                               <AnchorPane maxHeight="40.0" maxWidth="80.0" prefHeight="40.0" prefWidth="64.0">
                                  <children>
-                                    <Label layoutX="27.0" text="Price" />
+                                    <Label layoutX="3.0" prefHeight="17.0" prefWidth="76.0" text="Selling price" />
                                     <Label fx:id="systemPrice" layoutX="2.0" layoutY="18.0" prefHeight="17.0" prefWidth="76.0" text="00000.00" textAlignment="CENTER" />
+                                 </children>
+                              </AnchorPane>
+                           </children>
+                        </StackPane>
+                     </children>
+                  </HBox>
+                  <HBox prefHeight="40.0" prefWidth="112.0">
+                     <children>
+                        <StackPane prefHeight="40.0" prefWidth="109.0">
+                           <children>
+                              <AnchorPane maxHeight="40.0" maxWidth="80.0" prefHeight="40.0" prefWidth="64.0">
+                                 <children>
+                                    <Label layoutX="3.0" prefHeight="17.0" prefWidth="76.0" text="Real price" />
+                                    <Label fx:id="systemRealPrice" layoutX="2.0" layoutY="18.0" prefHeight="17.0" prefWidth="76.0" text="00000.00" textAlignment="CENTER" />
                                  </children>
                               </AnchorPane>
                            </children>
@@ -78,11 +92,11 @@
             </HBox>
          </children>
       </StackPane>
-      <StackPane fx:id="extraInfoStackPane" layoutY="48.0" prefHeight="70.0" prefWidth="800.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0">
+      <StackPane fx:id="extraInfoStackPane" layoutY="48.0" prefHeight="100.0" prefWidth="800.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0">
          <children>
             <VBox fx:id="vboxExtrainfo" prefHeight="70.0" prefWidth="800.0">
                <children>
-                  <VBox prefHeight="82.0" prefWidth="800.0">
+                  <VBox prefHeight="100.0" prefWidth="800.0">
                      <children>
                         <StackPane prefHeight="150.0" prefWidth="200.0">
                            <children>
@@ -91,6 +105,7 @@
                                     <TextField fx:id="systemNameEdit" layoutX="145.0" layoutY="9.0" prefHeight="25.0" prefWidth="184.0" />
                                     <Button layoutX="180.0" layoutY="39.0" mnemonicParsing="false" onAction="#saveSystemEdits" text="Save" />
                                     <Label layoutX="91.0" layoutY="13.0" text="Name" />
+                                    <Label layoutX="126.0" layoutY="66.0" prefHeight="33.0" prefWidth="149.0" text="Current system components" />
                                  </children>
                               </AnchorPane>
                            </children>

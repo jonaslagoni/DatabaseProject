@@ -22,8 +22,14 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.Border;
+import javafx.scene.layout.BorderStroke;
+import javafx.scene.layout.BorderStrokeStyle;
+import javafx.scene.layout.BorderWidths;
+import javafx.scene.layout.CornerRadii;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
+import javafx.scene.paint.Color;
 import netbeansproject.coreobjects.Case;
 import netbeansproject.coreobjects.Cpu;
 import netbeansproject.coreobjects.Mainboard;
@@ -36,6 +42,12 @@ import netbeansproject.databasecore.DatabaseController;
  * @author Lagoni
  */
 public class SystemController implements Initializable {
+
+    private boolean shown;
+    private DatabaseController databaseController;
+    private int toogleHeight = 160;
+    private double totalPrice = 0.0;
+    private int minInventory = Integer.MAX_VALUE;
     @FXML
     private AnchorPane root;
     @FXML
@@ -56,12 +68,8 @@ public class SystemController implements Initializable {
     private AnchorPane extraInfoAnchorPane;
     @FXML
     private TextField systemNameEdit;
-
-    private boolean shown;
-    private DatabaseController databaseController;
-    private int toogleHeight = 120;
-    private double totalPrice = 0.0;
-    private int minInventory = Integer.MAX_VALUE;
+    @FXML
+    private Label systemRealPrice;
     /**
      * Initializes the controller class.
      */
@@ -97,7 +105,7 @@ public class SystemController implements Initializable {
     private void saveSystemEdits(ActionEvent event) {
         String updateStatement = "UPDATE computersystem " +
         "SET name=? " +
-        "WHERE componentid = " + systemId.getText() + ";";
+        "WHERE componentlistid = " + systemId.getText() + ";";
         try {
             PreparedStatement preparedStatementInsert = databaseController.getCon().prepareStatement(updateStatement);
             preparedStatementInsert.setString(1, systemNameEdit.getText());
@@ -144,6 +152,21 @@ public class SystemController implements Initializable {
             while(componentsRS.next()){
                 FXMLLoader loader = new FXMLLoader(getClass().getResource("fxml/Component.fxml"));
                 AnchorPane pane = (AnchorPane)loader.load();
+                pane.setOnMouseEntered(new EventHandler<MouseEvent>(){
+                    @Override
+                    public void handle(MouseEvent event) {
+                        pane.setStyle("-fx-background-color:#848484;");
+                    }
+                
+                });
+                pane.setOnMouseExited(new EventHandler<MouseEvent>(){
+                    @Override
+                    public void handle(MouseEvent event) {
+                        pane.setStyle("-fx-background-color:transparent;");
+                    }
+                });
+                
+                pane.setBorder(new Border(new BorderStroke(Color.BROWN, BorderStrokeStyle.SOLID, CornerRadii.EMPTY, BorderWidths.DEFAULT)));
                 ComponentController controller = loader.<ComponentController>getController();
                 controller.setParentRoot(root);
                 controller.setParentController(this);
@@ -151,7 +174,8 @@ public class SystemController implements Initializable {
                 controller.setComponentId(componentsRS.getString("componentId"));
                 controller.setComponentName(componentsRS.getString("name"));
                 controller.setComponentKind(componentsRS.getString("kind"));
-                controller.setComponentPrice(componentsRS.getString("price"));
+                controller.setComponentPrice("" + (((int)Math.round(componentsRS.getDouble("price")*1.3))-0.01));
+                controller.setComponentRealPrice("" + componentsRS.getString("price"));
                 totalPrice += componentsRS.getFloat("price");
                 controller.setComponentStock(componentsRS.getString("stock"));
                 if(minInventory > componentsRS.getInt("stock")){
@@ -190,8 +214,7 @@ public class SystemController implements Initializable {
                         controller.setComponentType(ComponentController.ComponentType.RAM);
                         break;
                 }
-                pane.relocate(0, 80*counter+120);
-                toogleHeight += 40;
+                toogleHeight += 39;
                 counter++;
                 vboxExtrainfo.getChildren().add(pane);
                 
@@ -261,4 +284,5 @@ public class SystemController implements Initializable {
     public void setTotalPrice(double totalPrice) {
         this.totalPrice = totalPrice;
     }
+    
 }

@@ -7,17 +7,3 @@ and open the template in the editor.
     Created on : 31-03-2017, 14:35:09
     Author     : Lagoni
 */
-
-.list-cell:filled:selected:focused, .list-cell:filled:selected {
-    -fx-background-color: #777777;
-    -fx-text-fill: black;
-}
-.list-cell{
-    -fx-border-color: blue;
-    -fx-border-insets: 5;
-    -fx-border-width: 2;
-}
-
-.list-cell:filled:hover{
-    -fx-background-color: #777777;
-}

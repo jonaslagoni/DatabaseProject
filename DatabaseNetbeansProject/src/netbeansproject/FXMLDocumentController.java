@@ -10,6 +10,7 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.net.URL;
 import java.sql.Connection;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -23,7 +24,12 @@ import javafx.fxml.Initializable;
 import javafx.scene.control.ListView;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.AnchorPane;
-import javafx.scene.layout.VBox;
+import javafx.scene.layout.Border;
+import javafx.scene.layout.BorderStroke;
+import javafx.scene.layout.BorderStrokeStyle;
+import javafx.scene.layout.BorderWidths;
+import javafx.scene.layout.CornerRadii;
+import javafx.scene.paint.Color;
 import netbeansproject.coreobjects.Case;
 import netbeansproject.coreobjects.Cpu;
 import netbeansproject.coreobjects.Mainboard;
@@ -40,6 +46,7 @@ public class FXMLDocumentController implements Initializable {
     private DatabaseController databaseController;
     private ObservableList<AnchorPane> components = FXCollections.observableArrayList();
     private ObservableList<AnchorPane> systems = FXCollections.observableArrayList();
+    private ObservableList<AnchorPane> restocking = FXCollections.observableArrayList();
     @FXML
     private ListView<AnchorPane> componentList;
     @FXML
@@ -70,6 +77,8 @@ public class FXMLDocumentController implements Initializable {
     private TextField databaseDatabase;
     @FXML
     private ListView<AnchorPane> SystemList;
+    @FXML
+    private ListView<AnchorPane> restockingList;
     
     
     @Override
@@ -80,9 +89,95 @@ public class FXMLDocumentController implements Initializable {
         testDataController = new TestDataController(databaseController);
         componentList.setItems(components);
         SystemList.setItems(systems);
+        restockingList.setItems(restocking);
         initSystemList();
         initComponentList();
+        initRestockingList();
     }    
+    
+    private void initRestockingList(){
+        try {
+            Connection con = databaseController.getCon();
+            Statement componentListStatement = con.createStatement(ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_UPDATABLE);
+            
+            String restockingListSQL = "SELECT  " +
+                                    "component.componentId, " +
+                                    "component.name, " +
+                                    "component.kind, " +
+                                    "component.price, " +
+                                    "component.preferedrestock, " +
+                                    "component.minimumrestock, " +
+                                    "component.stock, " +
+                                    "cpu.socket, " +
+                                    "cpu.clockspeed, " +
+                                    "ram.ramtype, " +
+                                    "ram.busspeed, " +
+                                    "mainboard.socket as mainboardSocket, " +
+                                    "mainboard.ramtype as mainboardRamType, " +
+                                    "mainboard.onboardgraphics, " +
+                                    "mainboard.formfactor as mainboardFormFactor, " +
+                                    "computercase.formfactor " +
+                                    "FROM component " +
+                                    "LEFT JOIN cpu ON cpu.componentId = component.componentId " +
+                                    "LEFT JOIN ram ON ram.componentId = component.componentId " +
+                                    "LEFT JOIN mainboard ON mainboard.componentId = component.componentId " +
+                                    "LEFT JOIN computercase ON computercase.componentId = component.componentId " +
+                                    "WHERE component.stock < component.minimumrestock " +
+                                    "ORDER BY component.componentId ASC;";
+            
+            ResultSet componentsRS = componentListStatement.executeQuery(restockingListSQL);
+            while(componentsRS.next()){
+                FXMLLoader loader = new FXMLLoader(getClass().getResource("fxml/Component.fxml"));
+                AnchorPane pane = (AnchorPane)loader.load();
+                ComponentController controller = loader.<ComponentController>getController();
+                controller.setDatabaseController(databaseController);
+                controller.setComponentId(componentsRS.getString("componentId"));
+                controller.setComponentName(componentsRS.getString("name"));
+                controller.setComponentKind(componentsRS.getString("kind"));
+                controller.setComponentPrice(componentsRS.getString("price"));
+                controller.setComponentStock(componentsRS.getString("stock"));
+                controller.setComponentPreferedStock(componentsRS.getString("preferedrestock"));
+                controller.setComponentMinimumStock(componentsRS.getString("minimumrestock"));
+                switch(componentsRS.getString("kind")){
+                    case "CASE":
+                        Case componentCase = new Case();
+                        componentCase.setFormFactor(componentsRS.getString("formfactor") == null ? "Nothing" : componentsRS.getString("formfactor"));
+                        controller.setComponent(componentCase);
+                        controller.setComponentType(ComponentController.ComponentType.CASE);
+                        break;
+                    case "CPU":
+                        Cpu componentCpu = new Cpu();
+                        componentCpu.setClockSpeed(componentsRS.getFloat("clockSpeed"));
+                        componentCpu.setSocket(componentsRS.getString("socket") == null ? "Nothing" : componentsRS.getString("socket"));
+                        controller.setComponent(componentCpu);
+                        controller.setComponentType(ComponentController.ComponentType.CPU);
+                        break;
+                    case "MAINBOARD":
+                        
+                        Mainboard componentMainboard = new Mainboard();
+                        componentMainboard.setSocket(componentsRS.getString("mainboardSocket") == null ? "Nothing" : componentsRS.getString("mainboardSocket"));
+                        componentMainboard.setOnBoardGraphics(componentsRS.getBoolean("onboardgraphics"));
+                        componentMainboard.setRamType(componentsRS.getString("mainboardRamType") == null ? "Nothing" : componentsRS.getString("mainboardRamType"));
+                        componentMainboard.setFormFactor(componentsRS.getString("mainboardFormFactor") == null ? "Nothing" : componentsRS.getString("mainboardFormFactor"));
+                        controller.setComponent(componentMainboard);
+                        controller.setComponentType(ComponentController.ComponentType.MAINBOARD);
+                        break;
+                    case "RAM":
+                        Ram componentRam = new Ram();
+                        componentRam.setBusSpeed(componentsRS.getInt("busspeed"));
+                        componentRam.setRamType(componentsRS.getString("ramtype") == null ? "Nothing" : componentsRS.getString("ramtype"));
+                        controller.setComponent(componentRam);
+                        controller.setComponentType(ComponentController.ComponentType.RAM);
+                        break;
+                }
+                restocking.add(pane);
+            }
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+        } catch (IOException ex) {
+            ex.printStackTrace();
+        }
+    }
     
     private void initSystemList(){
         try {
@@ -99,6 +194,7 @@ public class FXMLDocumentController implements Initializable {
             while(systemRS.next()){
                 FXMLLoader loader = new FXMLLoader(getClass().getResource("fxml/System.fxml"));
                 AnchorPane pane = (AnchorPane)loader.load();
+                pane.setBorder(new Border(new BorderStroke(Color.BLACK, BorderStrokeStyle.SOLID, CornerRadii.EMPTY, BorderWidths.DEFAULT)));
                 SystemController controller = loader.<SystemController>getController();
                 controller.setDatabaseController(databaseController);
                 controller.setSystemId(systemRS.getString("componentListId"));
@@ -151,7 +247,8 @@ public class FXMLDocumentController implements Initializable {
                 controller.setComponentId(componentsRS.getString("componentId"));
                 controller.setComponentName(componentsRS.getString("name"));
                 controller.setComponentKind(componentsRS.getString("kind"));
-                controller.setComponentPrice(componentsRS.getString("price"));
+                controller.setComponentPrice("" + (((int)Math.round(componentsRS.getDouble("price")*1.3))));
+                controller.setComponentRealPrice("" + componentsRS.getString("price"));
                 controller.setComponentStock(componentsRS.getString("stock"));
                 controller.setComponentPreferedStock(componentsRS.getString("preferedrestock"));
                 controller.setComponentMinimumStock(componentsRS.getString("minimumrestock"));
@@ -269,5 +366,26 @@ public class FXMLDocumentController implements Initializable {
     private void updateSystemList(ActionEvent event) {
         systems.clear();
         initSystemList();
+    }
+
+    @FXML
+    private void updateRestockList(ActionEvent event) {
+        restocking.clear();
+        initRestockingList();
+    }
+
+    @FXML
+    private void restockComponents(ActionEvent event) {
+        String updateStatement = "UPDATE component " +
+        "SET stock = preferedrestock " +
+        "WHERE stock < minimumrestock;";
+        try {
+            PreparedStatement preparedStatementInsert = databaseController.getCon().prepareStatement(updateStatement, Statement.RETURN_GENERATED_KEYS);
+            preparedStatementInsert.executeUpdate();
+            restocking.clear();
+            initRestockingList();
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+        }
     }
 }

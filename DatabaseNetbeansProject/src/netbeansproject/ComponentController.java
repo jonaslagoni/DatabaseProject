@@ -36,6 +36,17 @@ import netbeansproject.databasecore.DatabaseController;
  * @author jonas
  */
 public class ComponentController implements Initializable {
+    
+    public enum ComponentType {
+        CPU, RAM, CASE, MAINBOARD, GPU
+    };
+    private boolean shown;
+    private ComponentType componentType;
+    private VBox componentTypeAnchorPane;
+    private Component component;
+    private Pane parentRoot;
+    private SystemController parentController;
+    private DatabaseController databaseController;
     @FXML
     private StackPane mainPanel;
     @FXML
@@ -64,18 +75,9 @@ public class ComponentController implements Initializable {
     private TextField componentPriceEdit;
     @FXML
     private VBox vboxExtrainfo;
-
+    @FXML
+    private Label componentRealPrice;
     
-    private DatabaseController databaseController;
-    public enum ComponentType {
-        CPU, RAM, CASE, MAINBOARD, GPU
-    };
-    private boolean shown;
-    private ComponentType componentType;
-    private VBox componentTypeAnchorPane;
-    private Component component;
-    private Pane parentRoot;
-    private SystemController parentController;
     /**
      * Initializes the controller class.
      */
@@ -138,9 +140,16 @@ public class ComponentController implements Initializable {
      */
     public void setComponentPrice(String componentPrice) {
         this.componentPrice.setText(componentPrice);
-        componentPriceEdit.setText(componentPrice);
     }
 
+    /**
+     * @param componentPrice the componentPrice to set
+     */
+    public void setComponentRealPrice(String componentPrice) {
+        this.componentRealPrice.setText(componentPrice);
+        componentPriceEdit.setText(componentPrice);
+    }
+    
     /**
      * @param componentStock the componentStock to set
      */

@@ -32,28 +32,28 @@
                         </StackPane>
                      </children>
                   </HBox>
-                  <HBox prefHeight="41.0" prefWidth="184.0">
+                  <HBox prefHeight="40.0" prefWidth="154.0">
                      <children>
                         <StackPane prefHeight="41.0" prefWidth="268.0">
                            <children>
                               <AnchorPane prefHeight="41.0" prefWidth="204.0">
                                  <children>
                                     <Label layoutX="80.0" text="Name" />
-                                    <Label fx:id="componentName" layoutX="6.0" layoutY="19.0" prefHeight="17.0" prefWidth="173.0" text="component 1" textAlignment="CENTER" />
+                                    <Label fx:id="componentName" layoutX="6.0" layoutY="19.0" prefHeight="17.0" prefWidth="146.0" text="component 1" textAlignment="CENTER" />
                                  </children>
                               </AnchorPane>
                            </children>
                         </StackPane>
                      </children>
                   </HBox>
-                  <HBox prefHeight="41.0" prefWidth="131.0">
+                  <HBox prefHeight="40.0" prefWidth="93.0">
                      <children>
                         <StackPane prefHeight="41.0" prefWidth="165.0">
                            <children>
                               <AnchorPane maxWidth="103.0" prefHeight="41.0" prefWidth="103.0">
                                  <children>
                                     <Label layoutX="40.0" text="Kind" />
-                                    <Label fx:id="componentKind" layoutX="39.0" layoutY="19.0" prefHeight="17.0" prefWidth="32.0" text="TEST" textAlignment="CENTER" />
+                                    <Label fx:id="componentKind" layoutX="14.0" layoutY="18.0" prefHeight="17.0" prefWidth="76.0" text="TEST" textAlignment="CENTER" />
                                  </children>
                               </AnchorPane>
                            </children>
@@ -66,8 +66,22 @@
                            <children>
                               <AnchorPane maxHeight="40.0" maxWidth="80.0" prefHeight="40.0" prefWidth="64.0">
                                  <children>
-                                    <Label layoutX="27.0" text="Price" />
+                                    <Label layoutX="7.0" layoutY="1.0" text="Selling price" />
                                     <Label fx:id="componentPrice" layoutX="4.0" layoutY="18.0" prefHeight="17.0" prefWidth="76.0" text="00000.00" textAlignment="CENTER" />
+                                 </children>
+                              </AnchorPane>
+                           </children>
+                        </StackPane>
+                     </children>
+                  </HBox>
+                  <HBox prefHeight="41.0" prefWidth="98.0">
+                     <children>
+                        <StackPane prefHeight="41.0" prefWidth="146.0">
+                           <children>
+                              <AnchorPane maxHeight="40.0" maxWidth="80.0" prefHeight="40.0" prefWidth="64.0">
+                                 <children>
+                                    <Label layoutX="14.0" text="Real price" />
+                                    <Label fx:id="componentRealPrice" layoutX="4.0" layoutY="18.0" prefHeight="17.0" prefWidth="76.0" text="00000.00" textAlignment="CENTER" />
                                  </children>
                               </AnchorPane>
                            </children>
