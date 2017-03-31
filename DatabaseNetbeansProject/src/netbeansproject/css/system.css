@@ -5,9 +5,3 @@
 .mainFxmlClass {
 
 }
-
-#test{
-    -fx-border-color: blue;
-    -fx-border-insets: 5;
-    -fx-border-width: 2;
-}
