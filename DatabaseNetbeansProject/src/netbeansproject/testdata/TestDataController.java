@@ -322,7 +322,7 @@ public class TestDataController {
         String socketToFind = mainboardRS.getString("socket");
         String ramTypeToFind = mainboardRS.getString("ramtype");
         String formFactorToFind = mainboardRS.getString("formfactor");
-        boolean findGPU = mainboardRS.getBoolean("onboardgraphics");
+        boolean onBoardGraphics = mainboardRS.getBoolean("onboardgraphics");
         
         //get the cpu id
         int cpuId = cpuSocketList.get(socketToFind).get(random.nextInt(cpuSocketList.get(socketToFind).size()));
@@ -333,7 +333,7 @@ public class TestDataController {
         //get the ram id
         int ramId = ramTypeList.get(ramTypeToFind).get(random.nextInt(ramTypeList.get(ramTypeToFind).size()));
         int gpuId = 0;
-        if(findGPU){
+        if(!onBoardGraphics){
             gpuId = gpuList.get(random.nextInt(gpuList.size()));
         }
         
@@ -350,7 +350,7 @@ public class TestDataController {
         insertComponent(connection, preparedStatementInsert, cpuId, lastInsertedId);
         insertComponent(connection, preparedStatementInsert, caseId, lastInsertedId);
         insertComponent(connection, preparedStatementInsert, ramId, lastInsertedId);
-        if(findGPU){
+        if(!onBoardGraphics){
             insertComponent(connection, preparedStatementInsert, gpuId, lastInsertedId);
         }
         connection.commit();
