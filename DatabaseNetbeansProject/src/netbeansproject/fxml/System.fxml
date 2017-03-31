@@ -78,7 +78,9 @@
             </HBox>
          </children>
       </StackPane>
+      <StackPane fx:id="extraInfoStackPane" layoutY="48.0" prefHeight="70.0" prefWidth="800.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0">
          <children>
+            <VBox fx:id="vboxExtrainfo" prefHeight="70.0" prefWidth="800.0">
                <children>
                   <VBox prefHeight="82.0" prefWidth="800.0">
                      <children>

@@ -23,6 +23,7 @@ import javafx.fxml.Initializable;
 import javafx.scene.control.ListView;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.VBox;
 import netbeansproject.coreobjects.Case;
 import netbeansproject.coreobjects.Cpu;
 import netbeansproject.coreobjects.Mainboard;
@@ -84,7 +85,32 @@ public class FXMLDocumentController implements Initializable {
     }    
     
     private void initSystemList(){
-        
+        try {
+            Connection con = databaseController.getCon();
+            Statement componentListStatement = con.createStatement(ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_UPDATABLE);
+            
+            String systemListSql = "SELECT " +
+                                    "computersystem.componentListId, " + 
+                                    "computersystem.name " +
+                                    "FROM computersystem " +
+                                    "ORDER BY computersystem.componentListId ASC;";
+            
+            ResultSet systemRS = componentListStatement.executeQuery(systemListSql);
+            while(systemRS.next()){
+                FXMLLoader loader = new FXMLLoader(getClass().getResource("fxml/System.fxml"));
+                AnchorPane pane = (AnchorPane)loader.load();
+                SystemController controller = loader.<SystemController>getController();
+                controller.setDatabaseController(databaseController);
+                controller.setSystemId(systemRS.getString("componentListId"));
+                controller.setSystemName(systemRS.getString("name"));
+                controller.setComponents();
+                systems.add(pane);
+            }
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+        } catch (IOException ex) {
+            ex.printStackTrace();
+        }
     }
     
     private void initComponentList(){
@@ -164,9 +190,9 @@ public class FXMLDocumentController implements Initializable {
                 components.add(pane);
             }
         } catch (SQLException ex) {
-            System.out.println(ex);
+            ex.printStackTrace();
         } catch (IOException ex) {
-            System.out.println(ex);
+            ex.printStackTrace();
         }
     }
     @FXML

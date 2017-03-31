@@ -11,8 +11,6 @@ import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ResourceBundle;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
@@ -22,6 +20,7 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import netbeansproject.coreobjects.Case;
@@ -37,7 +36,6 @@ import netbeansproject.databasecore.DatabaseController;
  * @author jonas
  */
 public class ComponentController implements Initializable {
-
     @FXML
     private StackPane mainPanel;
     @FXML
@@ -76,7 +74,8 @@ public class ComponentController implements Initializable {
     private ComponentType componentType;
     private VBox componentTypeAnchorPane;
     private Component component;
-    
+    private Pane parentRoot;
+    private SystemController parentController;
     /**
      * Initializes the controller class.
      */
@@ -97,10 +96,18 @@ public class ComponentController implements Initializable {
             root.getChildren().remove(extraInfoStackPane);
             root.setMaxHeight(50);
             root.setPrefHeight(50);
+            if(parentRoot != null){
+                parentRoot.setPrefHeight(parentRoot.getPrefHeight()-125);
+                parentController.setToogleHeight(parentController.getToogleHeight()-125);
+            }
         }else{
             root.getChildren().add(extraInfoStackPane);
             root.setPrefHeight(175);
             root.setMaxHeight(175);
+            if(parentRoot != null){
+                parentRoot.setPrefHeight(parentRoot.getPrefHeight()+125);
+                parentController.setToogleHeight(parentController.getToogleHeight()+125);
+            }
         }
         shown = !shown;
     }
@@ -157,6 +164,7 @@ public class ComponentController implements Initializable {
 
     @FXML
     private void saveComponentEdits(ActionEvent event) {
+        double oldPrice = Double.parseDouble(componentPrice.getText());
         String updateStatement = "UPDATE component " +
         "SET name=?, price=? " +
         "WHERE componentid = "+ componentId.getText() + ";";
@@ -168,8 +176,12 @@ public class ComponentController implements Initializable {
                 preparedStatementInsert.executeUpdate();
                 componentName.setText(componentNameEdit.getText());
                 componentPrice.setText(componentPriceEdit.getText());
+                if(parentController != null){
+                    parentController.setTotalPrice(parentController.getTotalPrice() - (oldPrice - Double.parseDouble(componentPriceEdit.getText())));
+                    parentController.setTotalPrice();
+                }
             } catch (SQLException ex) {
-                Logger.getLogger(ComponentController.class.getName()).log(Level.SEVERE, null, ex);
+                ex.printStackTrace();
             }
         }
     }
@@ -218,7 +230,7 @@ public class ComponentController implements Initializable {
                 vboxExtrainfo.getChildren().add(componentTypeAnchorPane);
             }
         } catch (IOException ex) {
-            System.out.println(ex);
+            ex.printStackTrace();
         }
     }
 
@@ -236,5 +248,18 @@ public class ComponentController implements Initializable {
         this.databaseController = databaseController;
     }
 
-    
+    /**
+     * @param parentRoot the parentRoot to set
+     */
+    public void setParentRoot(Pane parentRoot) {
+        this.parentRoot = parentRoot;
+    }
+
+    /**
+     * @param parentController the parentController to set
+     */
+    public void setParentController(SystemController parentController) {
+        this.parentController = parentController;
+    }
+
 }
