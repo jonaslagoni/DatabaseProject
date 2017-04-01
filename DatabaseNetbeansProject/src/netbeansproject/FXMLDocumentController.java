@@ -18,6 +18,7 @@ import java.util.ResourceBundle;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
+import javafx.event.Event;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
@@ -47,6 +48,10 @@ public class FXMLDocumentController implements Initializable {
     private ObservableList<AnchorPane> components = FXCollections.observableArrayList();
     private ObservableList<AnchorPane> systems = FXCollections.observableArrayList();
     private ObservableList<AnchorPane> restocking = FXCollections.observableArrayList();
+    private boolean updateComponentsList = false;
+    private boolean updateSystemList = false;
+    private boolean updateRestockingList = false;
+    
     @FXML
     private ListView<AnchorPane> componentList;
     @FXML
@@ -79,23 +84,32 @@ public class FXMLDocumentController implements Initializable {
     private ListView<AnchorPane> SystemList;
     @FXML
     private ListView<AnchorPane> restockingList;
-    
-    
     @Override
     public void initialize(URL url, ResourceBundle rb) {
         // TODO
         databaseController = new DatabaseController();
-        databaseController.makeConnection();
         testDataController = new TestDataController(databaseController);
         componentList.setItems(components);
         SystemList.setItems(systems);
         restockingList.setItems(restocking);
-        initSystemList();
-        initComponentList();
-        initRestockingList();
+        initDBAttributes();
+        if(databaseController.makeConnection()){
+            initSystemList();
+            initComponentList();
+            initRestockingList();
+        }
     }    
     
-    private void initRestockingList(){
+    private void initDBAttributes(){
+        databaseUrl.setText(databaseController.getUrl());
+        databasePort.setText(databaseController.getPort());
+        databaseUsername.setText(databaseController.getUsername());
+        databasePassword.setText(databaseController.getPassword());
+        databaseDatabase.setText(databaseController.getDatabase());
+    }
+    
+    public void initRestockingList(){
+        restocking.clear();
         try {
             Connection con = databaseController.getCon();
             Statement componentListStatement = con.createStatement(ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_UPDATABLE);
@@ -131,6 +145,7 @@ public class FXMLDocumentController implements Initializable {
                 AnchorPane pane = (AnchorPane)loader.load();
                 ComponentController controller = loader.<ComponentController>getController();
                 controller.setDatabaseController(databaseController);
+                controller.setRootController(this);
                 controller.setComponentId(componentsRS.getString("componentId"));
                 controller.setComponentName(componentsRS.getString("name"));
                 controller.setComponentKind(componentsRS.getString("kind"));
@@ -179,7 +194,8 @@ public class FXMLDocumentController implements Initializable {
         }
     }
     
-    private void initSystemList(){
+    public void initSystemList(){
+        systems.clear();
         try {
             Connection con = databaseController.getCon();
             Statement componentListStatement = con.createStatement(ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_UPDATABLE);
@@ -196,6 +212,7 @@ public class FXMLDocumentController implements Initializable {
                 AnchorPane pane = (AnchorPane)loader.load();
                 pane.setBorder(new Border(new BorderStroke(Color.BLACK, BorderStrokeStyle.SOLID, CornerRadii.EMPTY, BorderWidths.DEFAULT)));
                 SystemController controller = loader.<SystemController>getController();
+                controller.setRootController(this);
                 controller.setDatabaseController(databaseController);
                 controller.setSystemId(systemRS.getString("componentListId"));
                 controller.setSystemName(systemRS.getString("name"));
@@ -209,7 +226,8 @@ public class FXMLDocumentController implements Initializable {
         }
     }
     
-    private void initComponentList(){
+    public void initComponentList(){
+        components.clear();
         try {
             Connection con = databaseController.getCon();
             Statement componentListStatement = con.createStatement(ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_UPDATABLE);
@@ -244,10 +262,11 @@ public class FXMLDocumentController implements Initializable {
                 AnchorPane pane = (AnchorPane)loader.load();
                 ComponentController controller = loader.<ComponentController>getController();
                 controller.setDatabaseController(databaseController);
+                controller.setRootController(this);
                 controller.setComponentId(componentsRS.getString("componentId"));
                 controller.setComponentName(componentsRS.getString("name"));
                 controller.setComponentKind(componentsRS.getString("kind"));
-                controller.setComponentPrice("" + (((int)Math.round(componentsRS.getDouble("price")*1.3))));
+                controller.setComponentPrice("" + (((((int)Math.round(componentsRS.getDouble("price")*1.3))+99) / 100)*100-1));
                 controller.setComponentRealPrice("" + componentsRS.getString("price"));
                 controller.setComponentStock(componentsRS.getString("stock"));
                 controller.setComponentPreferedStock(componentsRS.getString("preferedrestock"));
@@ -294,36 +313,51 @@ public class FXMLDocumentController implements Initializable {
     }
     @FXML
     private void updateComponentsList(ActionEvent event) {
-        components.clear();
-        initComponentList();
+        if(databaseController.isConnected()){
+            initComponentList();
+        }
     }
 
     @FXML
     private void applyNewData(ActionEvent event) {
-        if(isInteger(numberOfComponents.getText(), 10)){
-            testDataController.setNumberOfComponents(Integer.parseInt(numberOfComponents.getText()));
-        }else{
-            numberOfComponents.setText("" + testDataController.getNumberOfComponents());
+        if(databaseController.isConnected()){
+            if(isInteger(numberOfComponents.getText(), 10)){
+                testDataController.setNumberOfComponents(Integer.parseInt(numberOfComponents.getText()));
+            }else{
+                numberOfComponents.setText("" + testDataController.getNumberOfComponents());
+            }
+            if(isInteger(numberOfSystems.getText(), 10)){
+                testDataController.setNumberOfSystems(Integer.parseInt(numberOfSystems.getText()));
+            }else{
+                numberOfSystems.setText("" + testDataController.getNumberOfSystems());
+            }
+            testDataController.setPrefixCase(prefixCase.getText());
+            testDataController.setPrefixCpu(prefixCpu.getText());
+            testDataController.setPrefixGpu(prefixGpu.getText());
+            testDataController.setPrefixMainboard(prefixMainboard.getText());
+            testDataController.setPrefixRam(prefixRam.getText());
+            testDataController.setPrefixSystem(prefixSystem.getText());
+
+            testDataController.deleteExistingTuples();
+            testDataController.insertTestData();
+            updateComponentsList = true;
+            updateSystemList = true;
+            updateRestockingList = true;
         }
-        if(isInteger(numberOfSystems.getText(), 10)){
-            testDataController.setNumberOfSystems(Integer.parseInt(numberOfSystems.getText()));
-        }else{
-            numberOfSystems.setText("" + testDataController.getNumberOfSystems());
-        }
-        testDataController.setPrefixCase(prefixCase.getText());
-        testDataController.setPrefixCpu(prefixCpu.getText());
-        testDataController.setPrefixGpu(prefixGpu.getText());
-        testDataController.setPrefixMainboard(prefixMainboard.getText());
-        testDataController.setPrefixRam(prefixRam.getText());
-        testDataController.setPrefixSystem(prefixSystem.getText());
-        
-        testDataController.deleteExistingTuples();
-        testDataController.insertTestData();
     }
 
     @FXML
     private void saveDatabaseSettings(ActionEvent event) {
-        
+        databaseController.setUrl(databaseUrl.getText());
+        databaseController.setPort(databasePort.getText());
+        databaseController.setUsername(databaseUsername.getText());
+        databaseController.setPassword(databasePassword.getText());
+        databaseController.setDatabase(databaseDatabase.getText());
+        if(databaseController.makeConnection()){
+            initSystemList();
+            initComponentList();
+            initRestockingList();
+        }
     }
     public static boolean isDouble(String s, int precisionLast, int precisionFirst){
         String[] splittedString = s.split("\\.");
@@ -364,28 +398,78 @@ public class FXMLDocumentController implements Initializable {
 
     @FXML
     private void updateSystemList(ActionEvent event) {
-        systems.clear();
-        initSystemList();
+        if(databaseController.isConnected()){
+            initSystemList();
+        }
     }
 
     @FXML
     private void updateRestockList(ActionEvent event) {
-        restocking.clear();
-        initRestockingList();
+        if(databaseController.isConnected()){
+            initRestockingList();
+        }
     }
 
     @FXML
     private void restockComponents(ActionEvent event) {
-        String updateStatement = "UPDATE component " +
-        "SET stock = preferedrestock " +
-        "WHERE stock < minimumrestock;";
-        try {
-            PreparedStatement preparedStatementInsert = databaseController.getCon().prepareStatement(updateStatement, Statement.RETURN_GENERATED_KEYS);
-            preparedStatementInsert.executeUpdate();
-            restocking.clear();
-            initRestockingList();
-        } catch (SQLException ex) {
-            ex.printStackTrace();
+        
+        if(databaseController.isConnected()){
+            String updateStatement = "UPDATE component " +
+            "SET stock = preferedrestock " +
+            "WHERE stock < minimumrestock;";
+            try {
+                PreparedStatement preparedStatementInsert = databaseController.getCon().prepareStatement(updateStatement, Statement.RETURN_GENERATED_KEYS);
+                preparedStatementInsert.executeUpdate();
+                initRestockingList();
+                updateComponentsList = true;
+                updateSystemList = true;
+            } catch (SQLException ex) {
+                ex.printStackTrace();
+            }
         }
+    }
+    @FXML
+    private void shouldUpdateComponenets(Event event) {
+        if(updateComponentsList){
+            initComponentList();
+            updateComponentsList = false;
+        }
+    }
+
+    @FXML
+    private void shouldUpdateSystems(Event event) {
+        if(updateSystemList){
+            initSystemList();
+            updateSystemList = false;
+        }
+    }
+
+    @FXML
+    private void shouldUpdateRestockingList(Event event) {
+        if(updateRestockingList){
+            initRestockingList();
+            updateRestockingList = false;
+        }
+    }
+
+    /**
+     * @param updateComponentsList the updateComponentsList to set
+     */
+    public void setUpdateComponentsList(boolean updateComponentsList) {
+        this.updateComponentsList = updateComponentsList;
+    }
+
+    /**
+     * @param updateSystemList the updateSystemList to set
+     */
+    public void setUpdateSystemList(boolean updateSystemList) {
+        this.updateSystemList = updateSystemList;
+    }
+
+    /**
+     * @param updateRestockingList the updateRestockingList to set
+     */
+    public void setUpdateRestockingList(boolean updateRestockingList) {
+        this.updateRestockingList = updateRestockingList;
     }
 }

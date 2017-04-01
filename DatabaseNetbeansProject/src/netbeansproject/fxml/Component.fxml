@@ -143,11 +143,12 @@
                         <AnchorPane fx:id="extraInfoAnchorPane" maxWidth="800.0" prefHeight="155.0" prefWidth="800.0">
                            <children>
                               <TextField fx:id="componentNameEdit" layoutX="213.0" layoutY="7.0" prefHeight="25.0" prefWidth="184.0" />
-                              <Button layoutX="377.0" layoutY="41.0" mnemonicParsing="false" onAction="#saveComponentEdits" text="Save" />
+                              <Button layoutX="243.0" layoutY="41.0" mnemonicParsing="false" onAction="#saveComponentEdits" text="Save" />
                               <TextField fx:id="componentPriceEdit" layoutX="522.0" layoutY="7.0" prefHeight="25.0" prefWidth="120.0" />
                               <Label layoutX="159.0" layoutY="11.0" text="Name" />
                               <Label layoutX="467.0" layoutY="11.0" text="Price " />
                               <Label layoutX="472.0" layoutY="33.0" prefHeight="40.0" prefWidth="194.0" text="Must be max 8 digits and 2 precesions. Seperated by a &quot;.&quot;" textAlignment="CENTER" underline="true" wrapText="true" />
+                              <Button layoutX="297.0" layoutY="41.0" mnemonicParsing="false" onAction="#buyComponent" text="Buy component" />
                            </children>
                         </AnchorPane>
                      </children>

@@ -12,6 +12,8 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.ResourceBundle;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
@@ -19,6 +21,8 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Label;
+import javafx.scene.control.Spinner;
+import javafx.scene.control.SpinnerValueFactory;
 import javafx.scene.control.TextField;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
@@ -48,6 +52,8 @@ public class SystemController implements Initializable {
     private int toogleHeight = 160;
     private double totalPrice = 0.0;
     private int minInventory = Integer.MAX_VALUE;
+    private List<ComponentController> componentControllers;
+    private FXMLDocumentController rootController;
     @FXML
     private AnchorPane root;
     @FXML
@@ -70,13 +76,15 @@ public class SystemController implements Initializable {
     private TextField systemNameEdit;
     @FXML
     private Label systemRealPrice;
+    @FXML
+    private Spinner<Integer> systemCounter;
     /**
      * Initializes the controller class.
      */
     @Override
     public void initialize(URL url, ResourceBundle rb) {
         // TODO
-        
+        componentControllers = new ArrayList();
         mainPanel.addEventHandler(MouseEvent.MOUSE_PRESSED, new EventHandler<MouseEvent>(){
             public void handle(MouseEvent e) {
                 toggleExtraInfo();
@@ -168,8 +176,10 @@ public class SystemController implements Initializable {
                 
                 pane.setBorder(new Border(new BorderStroke(Color.BROWN, BorderStrokeStyle.SOLID, CornerRadii.EMPTY, BorderWidths.DEFAULT)));
                 ComponentController controller = loader.<ComponentController>getController();
+                componentControllers.add(controller);
                 controller.setParentRoot(root);
                 controller.setParentController(this);
+                controller.setRootController(rootController);
                 controller.setDatabaseController(databaseController);
                 controller.setComponentId(componentsRS.getString("componentId"));
                 controller.setComponentName(componentsRS.getString("name"));
@@ -234,6 +244,7 @@ public class SystemController implements Initializable {
     
     public void setMinStock(){
         systemStock.setText("" + minInventory);
+        systemCounter.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, minInventory, 0));
     }
     /**
      * @param databaseController the databaseController to set
@@ -283,6 +294,49 @@ public class SystemController implements Initializable {
      */
     public void setTotalPrice(double totalPrice) {
         this.totalPrice = totalPrice;
+    }
+
+    @FXML
+    private void buySystem(ActionEvent event) {
+        for(int i = 0; i < systemCounter.getValue(); i++){
+            if(Integer.parseInt(systemStock.getText()) != 0){
+                for(ComponentController controller: componentControllers){
+                    controller.buyComponent();
+                }
+            }
+        }
+        systemCounter.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, Integer.parseInt(systemStock.getText()), 0));
+        rootController.initSystemList();
+        rootController.setUpdateRestockingList(true);
+        rootController.setUpdateComponentsList(true);
+    }
+
+    /**
+     * @return the minInventory
+     */
+    public int getMinInventory() {
+        return minInventory;
+    }
+
+    /**
+     * @param minInventory the minInventory to set
+     */
+    public void setMinInventory(int minInventory) {
+        this.minInventory = minInventory;
+    }
+
+    /**
+     * @return the systemStock
+     */
+    public Label getSystemStock() {
+        return systemStock;
+    }
+
+    /**
+     * @param rootController the rootController to set
+     */
+    public void setRootController(FXMLDocumentController rootController) {
+        this.rootController = rootController;
     }
     
 }

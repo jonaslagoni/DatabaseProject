@@ -46,6 +46,7 @@ public class ComponentController implements Initializable {
     private Component component;
     private Pane parentRoot;
     private SystemController parentController;
+    private FXMLDocumentController rootController;
     private DatabaseController databaseController;
     @FXML
     private StackPane mainPanel;
@@ -271,4 +272,32 @@ public class ComponentController implements Initializable {
         this.parentController = parentController;
     }
 
+    @FXML
+    private void buyComponent(ActionEvent event) {
+        buyComponent();
+    }
+    
+    public void buyComponent(){
+        if(Integer.parseInt(componentStock.getText()) != 0){
+            String updateStatement = "UPDATE component " +
+            "SET stock = stock - 1 " +
+            "WHERE componentid = " + componentId.getText() + ";";
+            try {
+                PreparedStatement preparedStatementInsert = databaseController.getCon().prepareStatement(updateStatement, Statement.RETURN_GENERATED_KEYS);
+                preparedStatementInsert.executeUpdate();
+                componentStock.setText("" + (Integer.parseInt(componentStock.getText())-1));
+                rootController.setUpdateRestockingList(true);
+                rootController.setUpdateSystemList(true);
+            } catch (SQLException ex) {
+                ex.printStackTrace();
+            }
+        }
+    }
+
+    /**
+     * @param rootController the rootController to set
+     */
+    public void setRootController(FXMLDocumentController rootController) {
+        this.rootController = rootController;
+    }
 }

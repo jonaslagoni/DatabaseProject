@@ -19,7 +19,7 @@ public class DatabaseController {
     private String username;
     private String password;
     private Connection con;
-    
+    private boolean connected = false;
     /**
      * inits some standard values
      */
@@ -28,7 +28,7 @@ public class DatabaseController {
         port = "5432";
         database = "project";
         username = "postgres";
-        password = "123456";
+        password = "45685";
     }
     
     /**
@@ -38,6 +38,7 @@ public class DatabaseController {
     public boolean makeConnection(){
         try {
             con = DriverManager.getConnection("jdbc:postgresql://" + url + ":" + port + "/" + database, username, password);
+            connected = true;
             return true;
         } catch (SQLException ex) {
             System.out.println(ex);
@@ -120,5 +121,12 @@ public class DatabaseController {
      */
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    /**
+     * @return the connected
+     */
+    public boolean isConnected() {
+        return connected;
     }
 }
