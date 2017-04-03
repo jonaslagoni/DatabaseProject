@@ -11,7 +11,7 @@
 <?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane id="AnchorPane" prefHeight="750.0" prefWidth="820.0" xmlns="http://javafx.com/javafx/8.0.60" xmlns:fx="http://javafx.com/fxml/1" fx:controller="netbeansproject.FXMLDocumentController">
+<AnchorPane id="AnchorPane" prefHeight="750.0" prefWidth="840.0" xmlns="http://javafx.com/javafx/8.0.60" xmlns:fx="http://javafx.com/fxml/1" fx:controller="netbeansproject.FXMLDocumentController">
    <stylesheets>
       <URL value="@../css/fxmldocument.css" />
    </stylesheets>
@@ -76,7 +76,7 @@
                                     <TextField fx:id="prefixCase" alignment="CENTER" layoutX="225.0" layoutY="357.0" text="CASE" />
                                     <Label layoutX="48.0" layoutY="580.0" text="Prefix name for system" />
                                     <TextField fx:id="prefixSystem" alignment="CENTER" layoutX="225.0" layoutY="576.0" text="SYSTEM" />
-                                    <Button layoutX="143.0" layoutY="612.0" mnemonicParsing="false" onAction="#applyNewData" text="Apply new data " />
+                                    <Button layoutX="152.0" layoutY="637.0" mnemonicParsing="false" onAction="#applyNewData" text="Apply new data " />
                                     <Button layoutX="135.0" layoutY="202.0" mnemonicParsing="false" onAction="#saveDatabaseSettings" text="Save database settings" />
                                     <Label layoutX="121.0" layoutY="14.0" text="Databaser settings">
                                        <font>
@@ -93,6 +93,11 @@
                                     <TextField fx:id="databasePassword" alignment="CENTER" layoutX="227.0" layoutY="169.0" prefHeight="25.0" prefWidth="146.0" text="456852" />
                                     <Label layoutX="34.0" layoutY="89.0" text="Database" />
                                     <TextField fx:id="databaseDatabase" alignment="CENTER" layoutX="226.0" layoutY="85.0" prefHeight="25.0" prefWidth="146.0" text="project" />
+                                    <Label layoutX="48.0" layoutY="614.0" prefHeight="23.0" prefWidth="311.0" text="(WARNING) Create over 1k components and systems at your own risk">
+                                       <font>
+                                          <Font name="System Italic" size="10.0" />
+                                       </font>
+                                    </Label>
                                  </children>
                               </AnchorPane>
                            </children>

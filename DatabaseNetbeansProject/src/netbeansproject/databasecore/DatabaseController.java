@@ -28,7 +28,7 @@ public class DatabaseController {
         port = "5432";
         database = "project";
         username = "postgres";
-        password = "45685";
+        password = "12345";
     }
     
     /**

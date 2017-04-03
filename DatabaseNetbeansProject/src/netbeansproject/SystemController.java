@@ -15,6 +15,8 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
@@ -184,7 +186,7 @@ public class SystemController implements Initializable {
                 controller.setComponentId(componentsRS.getString("componentId"));
                 controller.setComponentName(componentsRS.getString("name"));
                 controller.setComponentKind(componentsRS.getString("kind"));
-                controller.setComponentPrice("" + (((int)Math.round(componentsRS.getDouble("price")*1.3))-0.01));
+                controller.setComponentPrice("" + (int)Math.round(componentsRS.getDouble("price")*1.3));
                 controller.setComponentRealPrice("" + componentsRS.getString("price"));
                 totalPrice += componentsRS.getFloat("price");
                 controller.setComponentStock(componentsRS.getString("stock"));
@@ -239,12 +241,23 @@ public class SystemController implements Initializable {
     }
     
     public void setTotalPrice(){
-        systemPrice.setText("" + FXMLDocumentController.round(totalPrice, 2));
+        systemPrice.setText("" + (((((int)Math.round(totalPrice*1.3))+99) / 100)*100-1));
+        systemRealPrice.setText("" + (((((int)Math.round(totalPrice*1.3))+99) / 100)*100-1));
     }
     
     public void setMinStock(){
         systemStock.setText("" + minInventory);
         systemCounter.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, minInventory, 0));
+        systemCounter.valueProperty().addListener(new ChangeListener<Integer>() {
+            @Override
+            public void changed(ObservableValue<? extends Integer> observable,Integer oldValue, Integer newValue) {
+                if(newValue < 10){
+                    systemPrice.setText("" + (((((((int)Math.round(totalPrice*1.3))+99) / 100)*100-1)*0.8)*newValue));
+                }else{
+                    systemPrice.setText("" + (((((((int)Math.round(totalPrice*1.3))+99) / 100)*100-1)*(1.0-((newValue*2)/100)))*newValue));
+                }
+            }
+        });
     }
     /**
      * @param databaseController the databaseController to set

@@ -149,7 +149,8 @@ public class FXMLDocumentController implements Initializable {
                 controller.setComponentId(componentsRS.getString("componentId"));
                 controller.setComponentName(componentsRS.getString("name"));
                 controller.setComponentKind(componentsRS.getString("kind"));
-                controller.setComponentPrice(componentsRS.getString("price"));
+                controller.setComponentPrice("" + (int)Math.round(componentsRS.getDouble("price")*1.3));
+                controller.setComponentRealPrice("" + componentsRS.getString("price"));
                 controller.setComponentStock(componentsRS.getString("stock"));
                 controller.setComponentPreferedStock(componentsRS.getString("preferedrestock"));
                 controller.setComponentMinimumStock(componentsRS.getString("minimumrestock"));
@@ -266,7 +267,7 @@ public class FXMLDocumentController implements Initializable {
                 controller.setComponentId(componentsRS.getString("componentId"));
                 controller.setComponentName(componentsRS.getString("name"));
                 controller.setComponentKind(componentsRS.getString("kind"));
-                controller.setComponentPrice("" + (((((int)Math.round(componentsRS.getDouble("price")*1.3))+99) / 100)*100-1));
+                controller.setComponentPrice("" + (int)Math.round(componentsRS.getDouble("price")*1.3));
                 controller.setComponentRealPrice("" + componentsRS.getString("price"));
                 controller.setComponentStock(componentsRS.getString("stock"));
                 controller.setComponentPreferedStock(componentsRS.getString("preferedrestock"));

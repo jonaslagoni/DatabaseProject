@@ -188,7 +188,6 @@ public class ComponentController implements Initializable {
                 componentPrice.setText(componentPriceEdit.getText());
                 if(parentController != null){
                     parentController.setTotalPrice(parentController.getTotalPrice() - (oldPrice - Double.parseDouble(componentPriceEdit.getText())));
-                    parentController.setTotalPrice();
                 }
             } catch (SQLException ex) {
                 ex.printStackTrace();
