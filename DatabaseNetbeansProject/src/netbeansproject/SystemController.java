@@ -251,10 +251,10 @@ public class SystemController implements Initializable {
         systemCounter.valueProperty().addListener(new ChangeListener<Integer>() {
             @Override
             public void changed(ObservableValue<? extends Integer> observable,Integer oldValue, Integer newValue) {
-                if(newValue < 10){
-                    systemPrice.setText("" + (((((((int)Math.round(totalPrice*1.3))+99) / 100)*100-1)*0.8)*newValue));
+                if(newValue > 10){
+                    systemPrice.setText("" + (((((((int)Math.round(totalPrice*1.3))+99) / 100)*100-1)*0.8)*newValue.intValue()));
                 }else{
-                    systemPrice.setText("" + (((((((int)Math.round(totalPrice*1.3))+99) / 100)*100-1)*(1.0-((newValue*2)/100)))*newValue));
+                    systemPrice.setText("" + (((((((int)Math.round(totalPrice*1.3))+99) / 100)*100-1)*(1.0-((newValue.doubleValue()*2.0)/100.0)))*newValue.intValue()));
                 }
             }
         });
