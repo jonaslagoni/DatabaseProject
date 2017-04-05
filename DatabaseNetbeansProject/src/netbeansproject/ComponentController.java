@@ -23,6 +23,7 @@ import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
+import static netbeansproject.FXMLDocumentController.round;
 import netbeansproject.coreobjects.Case;
 import netbeansproject.coreobjects.Component;
 import netbeansproject.coreobjects.Cpu;
@@ -185,7 +186,8 @@ public class ComponentController implements Initializable {
                 preparedStatementInsert.setDouble(2, Double.parseDouble(componentPriceEdit.getText()));
                 preparedStatementInsert.executeUpdate();
                 componentName.setText(componentNameEdit.getText());
-                componentPrice.setText(componentPriceEdit.getText());
+                componentRealPrice.setText(componentPriceEdit.getText());
+                componentPrice.setText("" + round(Double.parseDouble(componentPriceEdit.getText())*1.3, 2));
                 if(parentController != null){
                     parentController.setTotalPrice(parentController.getTotalPrice() - (oldPrice - Double.parseDouble(componentPriceEdit.getText())));
                 }

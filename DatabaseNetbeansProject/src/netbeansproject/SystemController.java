@@ -36,6 +36,7 @@ import javafx.scene.layout.CornerRadii;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
+import static netbeansproject.FXMLDocumentController.round;
 import netbeansproject.coreobjects.Case;
 import netbeansproject.coreobjects.Cpu;
 import netbeansproject.coreobjects.Mainboard;
@@ -186,7 +187,7 @@ public class SystemController implements Initializable {
                 controller.setComponentId(componentsRS.getString("componentId"));
                 controller.setComponentName(componentsRS.getString("name"));
                 controller.setComponentKind(componentsRS.getString("kind"));
-                controller.setComponentPrice("" + (int)Math.round(componentsRS.getDouble("price")*1.3));
+                controller.setComponentPrice("" + round(componentsRS.getDouble("price")*1.3, 2));
                 controller.setComponentRealPrice("" + componentsRS.getString("price"));
                 totalPrice += componentsRS.getFloat("price");
                 controller.setComponentStock(componentsRS.getString("stock"));
@@ -241,7 +242,7 @@ public class SystemController implements Initializable {
     }
     
     public void setTotalPrice(){
-        systemPrice.setText("" + (((((int)Math.round(totalPrice*1.3))+99) / 100)*100-1));
+        systemPrice.setText("" + round(((((int)Math.round(totalPrice*1.3))+99) / 100)*100-1, 2));
         systemRealPrice.setText("" + (((((int)Math.round(totalPrice*1.3))+99) / 100)*100-1));
     }
     
@@ -252,9 +253,9 @@ public class SystemController implements Initializable {
             @Override
             public void changed(ObservableValue<? extends Integer> observable,Integer oldValue, Integer newValue) {
                 if(newValue > 10){
-                    systemPrice.setText("" + (((((((int)Math.round(totalPrice*1.3))+99) / 100)*100-1)*0.8)*newValue.intValue()));
+                    systemPrice.setText("" + round(((((((int)Math.round(totalPrice*1.3))+99) / 100)*100-1)*0.8)*newValue.intValue(), 2));
                 }else{
-                    systemPrice.setText("" + (((((((int)Math.round(totalPrice*1.3))+99) / 100)*100-1)*(1.0-((newValue.doubleValue()*2.0)/100.0)))*newValue.intValue()));
+                    systemPrice.setText("" + round(((((((int)Math.round(totalPrice*1.3))+99) / 100)*100-1)*(1.0-((newValue.doubleValue()*2.0)/100.0)))*newValue.intValue(), 2));
                 }
             }
         });
@@ -307,6 +308,7 @@ public class SystemController implements Initializable {
      */
     public void setTotalPrice(double totalPrice) {
         this.totalPrice = totalPrice;
+        setTotalPrice();
     }
 
     @FXML
